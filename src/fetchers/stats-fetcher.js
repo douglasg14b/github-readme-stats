@@ -1,22 +1,12 @@
-// @ts-check
-const axios = require("axios").default;
+const axios = require("axios");
 const githubUsernameRegex = require("github-username-regex");
 
 const retryer = require("../common/retryer");
 const calculateRank = require("../calculateRank");
-const {
-  request,
-  logger,
-  CustomError,
-  MissingParamError,
-} = require("../common/utils");
+const { request, logger, CustomError } = require("../common/utils");
 
 require("dotenv").config();
 
-/**
- * @param {import('axios').AxiosRequestHeaders} variables
- * @param {string} token
- */
 const fetcher = (variables, token) => {
   return request(
     {
@@ -97,19 +87,13 @@ const totalCommitsFetcher = async (username) => {
   }
 };
 
-/**
- * @param {string} username
- * @param {boolean} count_private
- * @param {boolean} include_all_commits
- * @returns {Promise<import("./types").StatsData>}
- */
 async function fetchStats(
   username,
   ownerAffiliations,
   count_private = false,
   include_all_commits = false,
 ) {
-  if (!username) throw new MissingParamError(["username"]);
+  if (!username) throw Error("Invalid username");
 
   const stats = {
     name: "",

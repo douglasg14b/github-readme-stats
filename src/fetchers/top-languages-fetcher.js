@@ -1,12 +1,7 @@
-// @ts-check
-const { request, logger, MissingParamError } = require("../common/utils");
+const { request, logger } = require("../common/utils");
 const retryer = require("../common/retryer");
 require("dotenv").config();
 
-/**
- * @param {import('Axios').AxiosRequestHeaders} variables
- * @param {string} token
- */
 const fetcher = (variables, token) => {
   return request(
     {
@@ -39,13 +34,9 @@ const fetcher = (variables, token) => {
   );
 };
 
-/**
- * @param {string} username
- * @param {string[]} exclude_repo
- * @returns {Promise<import("./types").TopLangData>}
- */
 async function fetchTopLanguages(username, ownerAffiliations, exclude_repo = []) {
-  if (!username) throw new MissingParamError(["username"]);
+  if (!username) throw Error("Invalid username");
+
   // Set default value for ownerAffiliations in GraphQL query won't work because
   // parseArray() will always return an empty array even nothing was specified
   // and GraphQL would consider that empty arr as a valid value. Nothing will be

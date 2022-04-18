@@ -1,4 +1,3 @@
-// @ts-check
 const Card = require("../common/Card");
 const I18n = require("../common/I18n");
 const { langCardLocales } = require("../translations");
@@ -17,28 +16,6 @@ const DEFAULT_LANGS_COUNT = 5;
 const DEFAULT_LANG_COLOR = "#858585";
 const CARD_PADDING = 25;
 
-/**
- * @typedef {import("../fetchers/types").Lang} Lang
- */
-
-/**
- * @param {Lang[]} arr
- */
- const getLongestLang = (arr) =>
- arr.reduce(
-   (savedLang, lang) =>
-     lang.name.length > savedLang.name.length ? lang : savedLang,
-   { name: "", size: null, color: "" },
- );
-
-/**
- * @param {{
- *  width: number,
- *  color: string,
- *  name: string,
- *  progress: string
- * }} props
- */
 const createProgressTextNode = ({ width, color, name, progress }) => {
   const paddingRight = 95;
   const progressTextX = width - paddingRight + 10;
@@ -58,9 +35,6 @@ const createProgressTextNode = ({ width, color, name, progress }) => {
   `;
 };
 
-/**
- * @param {{ lang: Lang, totalSize: number }} props
- */
 const createCompactLangNode = ({ lang, totalSize }) => {
   const percentage = ((lang.size / totalSize) * 100).toFixed(2);
   const color = lang.color || "#858585";
@@ -75,19 +49,21 @@ const createCompactLangNode = ({ lang, totalSize }) => {
   `;
 };
 
-/**
- * @param {{ langs: Lang[], totalSize: number }} props
- */
+const getLongestLang = (arr) =>
+  arr.reduce(
+    (savedLang, lang) =>
+      lang.name.length > savedLang.name.length ? lang : savedLang,
+    { name: "" },
+  );
+
 const createLanguageTextNode = ({ langs, totalSize }) => {
   const longestLang = getLongestLang(langs);
   const chunked = chunkArray(langs, langs.length / 2);
   const layouts = chunked.map((array) => {
-    // @ts-ignore
     const items = array.map((lang, index) =>
       createCompactLangNode({
         lang,
         totalSize,
-        // @ts-ignore
         index,
       }),
     );
@@ -108,7 +84,8 @@ const createLanguageTextNode = ({ langs, totalSize }) => {
 };
 
 /**
- * @param {Lang[]} langs
+ *
+ * @param {any[]} langs
  * @param {number} width
  * @param {number} totalLanguageSize
  * @returns {string}
@@ -129,7 +106,8 @@ const renderNormalLayout = (langs, width, totalLanguageSize) => {
 };
 
 /**
- * @param {Lang[]} langs
+ *
+ * @param {any[]} langs
  * @param {number} width
  * @param {number} totalLanguageSize
  * @returns {string}
@@ -174,6 +152,7 @@ const renderCompactLayout = (langs, width, totalLanguageSize) => {
       ${createLanguageTextNode({
         langs,
         totalSize: totalLanguageSize,
+        width,
       })}
     </g>
   `;
@@ -195,12 +174,6 @@ const calculateNormalLayoutHeight = (totalLangs) => {
   return 45 + (totalLangs + 1) * 40;
 };
 
-/**
- *
- * @param {Record<string, Lang>} topLangs
- * @param {string[]} hide
- * @param {string} langs_count
- */
 const useLanguages = (topLangs, hide, langs_count) => {
   let langs = Object.values(topLangs);
   let langsToHide = {};
@@ -227,11 +200,6 @@ const useLanguages = (topLangs, hide, langs_count) => {
   return { langs, totalLanguageSize };
 };
 
-/**
- * @param {import('../fetchers/types').TopLangData} topLangs
- * @param {Partial<import("./types").TopLangOptions>} options
- * @returns {string}
- */
 const renderTopLanguages = (topLangs, options = {}) => {
   const {
     hide_title,
@@ -258,7 +226,7 @@ const renderTopLanguages = (topLangs, options = {}) => {
   const { langs, totalLanguageSize } = useLanguages(
     topLangs,
     hide,
-    String(langs_count),
+    langs_count,
   );
 
   let width = isNaN(card_width) ? DEFAULT_CARD_WIDTH : card_width;
